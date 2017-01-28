@@ -1,0 +1,28 @@
+Package: Rfstrm
+Type: Package
+Title: Frame Streams data transport protocol.
+Version: 0.1
+Date: 2016-10-28
+Maintainer: Murray Stokely <murray@stokely.org>
+Authors@R: c(person("Murray", "Stokely", role = c("aut", "cre"),
+	            email = "murray@stokely.org"))
+Suggests:
+    RProtoBuf,RUnit
+Imports:
+    methods
+Encoding: UTF-8
+Description: Frame Streams is a light weight, binary clean protocol that
+    allows for the transport of arbitrarily encoded data payload sequences with
+    minimal framing overhead – just four bytes per data frame. Frame Streams does
+    not specify an encoding format for data frames and can be used with any data
+    serialization format that produces byte sequences, such as Protocol Buffers,
+    XML, JSON, MessagePack, YAML, etc. Frame Streams can be used as both a streaming
+    transport over a reliable byte stream socket (TCP sockets, TLS connections,
+    AF_UNIX sockets, etc.) for data in motion as well as a file format for data at
+    rest. A "Content Type" header identifies the type of payload being carried over
+    an individual Frame Stream and allows cooperating programs to determine how to
+    interpret a given sequence of data payloads.
+URL: http://farsightsec.github.io/fstrm/
+Classification/ACM: G.3
+License: Apache License 2.0
+RoxygenNote: 5.0.1

@@ -1,0 +1,83 @@
+\documentclass[10pt,twocolumn,a4paper]{article}
+%\VignetteIndexEntry{Rfstrm-quickref}
+%\VignetteKeywords{Rfstrm, package}
+%\VignetteDepends{Rfstrm}
+
+\setlength{\hoffset}{-0.8in}
+\setlength{\voffset}{-0.8in}
+
+\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt}
+\setlength{\oddsidemargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\footskip}{0pt}
+\setlength{\textheight}{27cm}
+\setlength{\textwidth}{20cm}
+
+\usepackage[colorlinks]{hyperref}
+
+\usepackage{microtype}                     %% cf http://www.khirevich.com/latex/microtype/
+\usepackage[T1]{fontenc}		   %% cf http://www.khirevich.com/latex/font/
+\usepackage[bitstream-charter]{mathdesign} %% cf http://www.khirevich.com/latex/font/
+
+<<echo=FALSE,print=FALSE>>=
+options(width= 50)
+library("Rfstrm")
+rpb.version <- packageDescription("Rfstrm")$Version
+@
+% closing $ needed here
+
+\author{Murray Stokely}
+\title{Rfstrm \Sexpr{rpb.version}: Quick Reference Guide}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+\thispagestyle{empty}
+
+\paragraph{Introduction}
+
+\texttt{Rfstrm} is a package for reading and writing binary frames of data with the Fstrm library.  This library is used by several DNS servers and tools for writing out compact binary DNS logs, but it can be used for any binary data.
+
+\paragraph{Application: Reading and Writing binary data}
+
+An Fstrm binary file includes a small binary header indicating the data type used by the file.  Each subsequent record is then written to the file with a length and record separator.
+
+<<echo=TRUE,print=FALSE,eval=TRUE>>=
+  out.file <- tempfile()
+  writer <-FstrmWriter$new(out.file, "binary:example")
+  writer$filename
+  writer$content.type
+  writer$write(charToRaw("0123456789"))
+  writer$write(charToRaw("0123456789"))
+  rm(writer)
+  gc()
+  
+  reader <- FstrmReader$new(out.file, "binary:example")
+  rawToChar(reader$readOne())
+  rawToChar(reader$readOne())
+@
+
+\paragraph{Application: Reading and Writing Protocol Buffers}
+
+The \texttt{RProtoBuf} library provides an R interface to Protocol Buffers which can be.
+
+\paragraph{Application: Parsing Unbound DNSTap logs}
+
+The Unbound DNS server includes a DNSTap feature which allows the server to write out a compact binary log of DNS requests.
+
+<<echo=TRUE,print=FALSE,eval=TRUE>>=
+library(RProtoBuf)
+header <- "protobuf:dnstap.Dnstap"
+ex.file <- system.file("unitTests/dnstap.20161026",
+                       package="Rfstrm")
+reader <- FstrmReader$new(ex.file, header)
+msgs <- reader$read(100000)
+df <- RawDNSTapToDF(msgs)
+head(df)
+@
+
+\end{document}
+
